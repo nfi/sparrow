@@ -197,24 +197,39 @@
 #define CC1200_GPIOx_VECTOR         GPIO_B_IRQn
 
 #define CC1200_CONF_AUTOCAL         1
+#define CC1200_CONF_USE_GPIO2       0
+#define CC1200_CONF_USE_RX_WATCHDOG 0
 
-/* only works with devices with two radios - test with two radios */
-#define DUAL_RADIO_CONF_RADIO_1 cc2538_rf_driver
-#define DUAL_RADIO_CONF_RADIO_2 cc1200_driver
-
-/* Support dual radio, 2.4GHz radio (default), or 868MHz */
-#if WITH_DUAL_RADIO
-#define NETSTACK_CONF_RADIO         dual_radio_driver
-#define NULLRDC_CONF_ACK_WAIT_TIME  (RTIMER_SECOND / 100)
-#elif WITH_868
-#define NETSTACK_CONF_RADIO         cc1200_driver
-#define NULLRDC_CONF_ACK_WAIT_TIME  (RTIMER_SECOND / 100)
-#else /* WITH_868 */
-#define NETSTACK_CONF_RADIO         cc2538_rf_driver
+#if WITH_868
+#define CC1200_CONF_RF_CFG          cc1200_802154g_920_928_fsk_50kbps
 #endif /* WITH_868 */
 
-#define CC1200_CONF_USE_GPIO2       0
-#define CC1200_CONF_USE_RX_WATCHDOG 1
+#if WITH_920
+#define CC1200_CONF_RF_CFG          cc1200_802154g_920_928_fsk_50kbps
+#define CC1200_CONF_DEFAULT_CHANNEL 0
+#endif /* WITH_920 */
+
+#if WITH_868 || WITH_920
+#define NETSTACK_CONF_RADIO                                 cc1200_driver
+/* Enable blocking frame retransmissions on nullrdc */
+#define NULLRDC_802154_AUTOACK                              1
+#define NULLRDC_CONF_ENABLE_RETRANSMISSIONS                 1
+#define NULLRDC_CONF_MAX_RETRANSMISSIONS                    3
+#define NULLRDC_CONF_ENABLE_RETRANSMISSIONS_BCAST           1
+
+#define NULLRDC_CONF_ACK_WAIT_TIME                          (RTIMER_SECOND / 200)
+#define NULLRDC_CONF_AFTER_ACK_DETECTED_WAIT_TIME           (RTIMER_SECOND / 1500)
+#define NULLRDC_CONF_802154_AUTOACK                         1
+#define NULLRDC_CONF_802154_AUTOACK_HW                      1
+#define NULLRDC_CONF_SEND_802154_ACK                        0
+
+#define CONTIKIMAC_CONF_CCA_CHECK_TIME                      (RTIMER_SECOND / 800)
+#define CONTIKIMAC_CONF_CCA_SLEEP_TIME                      (RTIMER_SECOND / 120)
+#define CONTIKIMAC_CONF_LISTEN_TIME_AFTER_PACKET_DETECTED   (RTIMER_SECOND / 8)
+#define CONTIKIMAC_CONF_AFTER_ACK_DETECTED_WAIT_TIME        (RTIMER_SECOND / 300)
+#define CONTIKIMAC_CONF_INTER_PACKET_INTERVAL               (RTIMER_SECOND / 200)
+
+#endif /* WITH_868 || WITH_920 */
 
 /** @} */
 /*---------------------------------------------------------------------------*/

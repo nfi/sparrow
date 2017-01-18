@@ -44,10 +44,6 @@ CREATERESCUEIMAGE_ARGS = -D
 
 CONTIKI_TARGET_DIRS = . dev $(BOARD)
 
-ifneq (,$(filter iot-u10 iot-u10plus donkeyjr, $(BOARD)))
-  CONTIKI_TARGET_SOURCEFILES += stts751.c
-endif
-
 CONTIKI_TARGET_SOURCEFILES += spi-arch.c
 CONTIKI_TARGET_SOURCEFILES += ${notdir ${wildcard $(CONTIKI_TARGET_PLATFORM)/$(BOARD)/*.c}}
 
@@ -99,13 +95,13 @@ else
   SERIALPORT=/dev/ttyACM0
 endif
 
-# Only for platform with dual radios such as IoT-U42
-ifdef WITH_DUAL_RADIO
-CFLAGS+=-DWITH_DUAL_RADIO=1
+# Only for platform with sub-GHz radio such as IoT-U42
+ifdef MAKE_WITH_868
+CFLAGS+=-DWITH_868=1
 endif
 
-ifdef WITH_868
-CFLAGS+=-DWITH_868=1
+ifdef MAKE_WITH_920
+  CFLAGS+=-DWITH_920=1
 endif
 
 include $(SPARROW_TOOLS)/Makefile.include
